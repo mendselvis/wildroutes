@@ -1,84 +1,30 @@
- 'use client';
-import { useState } from 'react';
+'use client';
+import { useState, useEffect } from 'react';
+import { supabase } from '@/lib/supabase'; 
 
 export default function Home() {
   const [activeFilter, setActiveFilter] = useState('All');
   const filters = ['All', 'Trekking', 'Camping', 'River rafting', 'Cycling', 'Rappelling'];
 
-  const activities = [
-    {
-      id: 1,
-      title: 'Rajmachi Fort Trek via Udhewadi Village',
-      location: 'Lonavala, Pune District',
-      difficulty: 'Moderate',
-      diffClass: 'diff-moderate',
-      desc: 'A 12km round trail through dense Sahyadri forest to a 9th-century Maratha fort perched at 925m. Monsoon waterfalls along the base path. Overnight option available with local homestay at Udhewadi.',
-      price: '₹1,800',
-      duration: '2 days',
-      distance: '12 km',
-      altitude: '925m',
-      operator: 'TrekMate Maharashtra',
-      rating: '4.9',
-      reviews: '214',
-      badge: 'Trending',
-      badgeColor: '#1A5C35',
-      img: 'https://images.unsplash.com/photo-1551632811-561732d1e306?w=600&q=80',
-    },
-    {
-      id: 2,
-      title: 'Kundalika River White-Water Rafting',
-      location: 'Kolad, Raigad District',
-      difficulty: 'Thrilling',
-      diffClass: 'diff-hard',
-      desc: 'Grade III–IV rapids on the Kundalika — one of Maharashtra\'s best rafting rivers. Peak flow August to October. Full-day package includes safety briefing, all gear, riverside lunch, and return transport.',
-      price: '₹1,200',
-      duration: '1 day',
-      distance: '14 km',
-      altitude: 'Grade III–IV',
-      operator: 'Rapids India',
-      rating: '4.8',
-      reviews: '387',
-      badge: 'Hot pick',
-      badgeColor: '#C0272D',
-      img: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&q=80',
-    },
-    {
-      id: 3,
-      title: 'Bhandardara Lakeside Starcamp',
-      location: 'Bhandardara, Ahmednagar District',
-      difficulty: 'Easy',
-      diffClass: 'diff-easy',
-      desc: 'Camp at the edge of Arthur Lake with Ratangad and Wilson Dam in full view. Evening bonfire, guided stargazing session, and a sunrise boat ride on the lake. All meals included.',
-      price: '₹2,400',
-      duration: '2 days',
-      distance: 'Tent + meals',
-      altitude: null,
-      operator: 'Sahyadri Campers',
-      rating: '4.9',
-      reviews: '156',
-      badge: 'Weekend',
-      badgeColor: '#4A3F9E',
-      img: 'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=600&q=80',
-    },
-    {
-      id: 4,
-      title: 'Pawna Lake Luxury Tent Camping',
-      location: 'Pawna Lake, Pune District',
-      difficulty: 'Easy',
-      diffClass: 'diff-easy',
-      desc: 'Premium Swiss tents on the banks of Pawna Lake with Tikona, Tung, and Lohagad forts dramatically framing the horizon. BBQ dinner, campfire, morning kayaking, and chai with fog-covered forts at sunrise.',
-      price: '₹3,200',
-      duration: '2 days',
-      distance: 'Kayaking included',
-      altitude: null,
-      operator: 'LakeView Camps',
-      rating: '4.9',
-      reviews: '502',
-      badge: 'Bestseller',
-      badgeColor: '#1A5C35',
-      img: 'https://images.unsplash.com/photo-1533130061792-64b345e4a833?w=600&q=80',
-    },
-  ];
+  const [activities, setActivities] = useState([]);
+const [loading, setLoading] = useState(true);
+
+useEffect(() => {
+  async function fetchActivities() {
+    const { data, error } = await supabase
+      .from('activities')
+      .select('*');
+    
+    if (error) {
+      console.error('Error fetching activities:', error);
+    } else {
+      setActivities(data);
+    }
+   console.log('Activities from Supabase:', data);
+  }
+
+  fetchActivities();
+}, []);
 
   return (
     <>
@@ -336,39 +282,38 @@ export default function Home() {
         </div>
         <div className="activity-list">
           {activities.map(a => (
-            <div className="activity-item" key={a.id}>
-              <div className="activity-img-wrap">
-                <img className="activity-img" src={a.img} alt={a.title}/>
-                <span className="activity-badge" style={{background: a.badgeColor}}>{a.badge}</span>
-              </div>
-              <div className="activity-body">
-                <div>
-                  <div className="activity-meta">
-                    <span className="activity-location">{a.location}</span>
-                    <span className={`activity-diff ${a.diffClass}`}>{a.difficulty}</span>
-                  </div>
-                  <h3 className="activity-title">{a.title}</h3>
-                  <p className="activity-desc">{a.desc}</p>
-                  <div className="facts">
-                    <span className="fact"><strong>{a.duration}</strong> duration</span>
-                    <span className="fact"><strong>{a.distance}</strong></span>
-                    {a.altitude && <span className="fact"><strong>{a.altitude}</strong></span>}
-                    <span className="fact">Operator: <strong>{a.operator}</strong></span>
-                  </div>
-                </div>
-                <div className="activity-footer">
-                  <div>
-                    <div className="activity-price-label">From per person</div>
-                    <div className="activity-price">{a.price} <span>/ person</span></div>
-                  </div>
-                  <div style={{display:'flex', alignItems:'center', gap:'16px'}}>
-                    <span className="fact">★ <strong>{a.rating}</strong> ({a.reviews} reviews)</span>
-                    <button className="book-btn">Book now</button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          ))}
+  <div className="activity-item" key={a.id}>
+    <div className="activity-img-wrap">
+      <img className="activity-img" src={a.image_url} alt={a.title}/>
+      <span className="activity-badge" style={{background: a.badge === 'Hot pick' ? '#C0272D' : '#1A5C35'}}>{a.badge}</span>
+    </div>
+    <div className="activity-body">
+      <div>
+        <div className="activity-meta">
+          <span className="activity-location">{a.location}</span>
+          <span className={`activity-diff diff-${a.difficulty?.toLowerCase()}`}>{a.difficulty}</span>
+        </div>
+        <h3 className="activity-title">{a.title}</h3>
+        <p className="activity-desc">{a.description}</p>
+        <div className="facts">
+          <span className="fact"><strong>{a.duration}</strong> duration</span>
+          <span className="fact"><strong>{a.distance}</strong></span>
+          <span className="fact">Operator: <strong>{a.operator}</strong></span>
+        </div>
+      </div>
+      <div className="activity-footer">
+        <div>
+          <div className="activity-price-label">From per person</div>
+          <div className="activity-price">₹{a.price} <span>/ person</span></div>
+        </div>
+        <div style={{display:'flex', alignItems:'center', gap:'16px'}}>
+          <span className="fact">★ <strong>{a.rating}</strong> ({a.reviews} reviews)</span>
+          <button className="book-btn">Book now</button>
+        </div>
+      </div>
+    </div>
+  </div>
+))}
         </div>
       </section>
 
