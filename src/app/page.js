@@ -4,6 +4,10 @@ import { supabase } from '@/lib/supabase';
 
 export default function Home() {
   const [activeFilter, setActiveFilter] = useState('All');
+  const [aiQuery, setAiQuery] = useState('');
+const [aiResults, setAiResults] = useState([]);
+const [aiLoading, setAiLoading] = useState(false);
+
   const filters = ['All', 'Trekking', 'Camping', 'River rafting', 'Cycling', 'Rappelling'];
 
   const [activities, setActivities] = useState([]);
@@ -20,13 +24,30 @@ useEffect(() => {
     } else {
       setActivities(data);
     }
-   console.log('Activities from Supabase:', data);
-setLoading(false);
+    console.log('Activities from Supabase:', data);
+    setLoading(false);
   }
 
   fetchActivities();
 }, []);
 
+async function handleAiSearch() {
+  if (!aiQuery.trim()) return;
+  setAiLoading(true);
+  setAiResults([]);
+  try {
+    const res = await fetch('/api/ai-finder', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ query: aiQuery }),
+    });
+    const data = await res.json();
+    setAiResults(data.recommendations);
+  } catch (err) {
+    console.error(err);
+  }
+  setAiLoading(false);
+}
   return (
     <>
       <style>{`
@@ -387,16 +408,37 @@ setLoading(false);
         </div>
       </section>
 
-      {/* AI FINDER */}
-      <div className="ai-section">
-        <p className="eyebrow">AI trip finder</p>
-        <h2 className="section-title">Not sure where to start?<br/>Just describe your ideal trip.</h2>
-        <p>Tell us who you&apos;re going with, your fitness level, budget, and which weekend — our AI matches you with the right experience instantly.</p>
-        <div className="ai-bar">
-          <input type="text" placeholder="e.g. Easy camping near Pune for 4 friends under ₹2,500 this weekend…"/>
-          <button>Find my trip →</button>
+     {/* AI FINDER */}
+<div className="ai-section">
+  <p className="eyebrow">AI trip finder</p>
+  <h2 className="section-title">Not sure where to start?<br/>Just describe your ideal trip.</h2>
+  <p>Tell us who you&apos;re going with, your fitness level, budget, and which weekend — our AI matches you with the right experience instantly.</p>
+  <div className="ai-bar">
+    <input 
+      type="text" 
+      placeholder="e.g. Easy camping near Pune for 4 friends under ₹2,500 this weekend…"
+      value={aiQuery}
+      onChange={(e) => setAiQuery(e.target.value)}
+      onKeyDown={(e) => e.key === 'Enter' && handleAiSearch()}
+    />
+    <button onClick={handleAiSearch} disabled={aiLoading}>
+      {aiLoading ? 'Finding...' : 'Find my trip →'}
+    </button>
+  </div>
+  {aiResults.length > 0 && (
+    <div style={{maxWidth:'620px', margin:'24px auto 0', display:'flex', flexDirection:'column', gap:'12px'}}>
+      {aiResults.map(a => (
+        <div key={a.id} style={{background:'rgba(255,255,255,0.12)', border:'1px solid rgba(255,255,255,0.2)', borderRadius:'4px', padding:'16px 20px', textAlign:'left', display:'flex', justifyContent:'space-between', alignItems:'center', gap:'16px', flexWrap:'wrap'}}>
+          <div>
+            <div style={{fontFamily:'Playfair Display, serif', fontWeight:'700', fontSize:'16px', color:'#fff', marginBottom:'4px'}}>{a.title}</div>
+            <div style={{fontSize:'13px', color:'rgba(255,255,255,0.7)'}}>{a.reason}</div>
+          </div>
+          <a href={`/activities/${a.id}`} style={{background:'#fff', color:'#1A5C35', fontSize:'13px', fontWeight:'600', padding:'10px 20px', borderRadius:'2px', textDecoration:'none', whiteSpace:'nowrap'}}>Book →</a>
         </div>
-      </div>
+      ))}
+    </div>
+  )}
+</div>
 
       {/* OPERATOR */}
       <section id="operator">
