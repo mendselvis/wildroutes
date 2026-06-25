@@ -308,7 +308,7 @@ useEffect(() => {
         </div>
         <div style={{display:'flex', alignItems:'center', gap:'16px'}}>
           <span className="fact">★ <strong>{a.rating}</strong> ({a.reviews} reviews)</span>
-          <button className="book-btn">Book now</button>
+          <a href={`/activities/${a.id}`} className="book-btn" style={{textDecoration:'none', display:'inline-block'}}>Book now</a> 
         </div>
       </div>
     </div>
