@@ -21,6 +21,7 @@ useEffect(() => {
       setActivities(data);
     }
    console.log('Activities from Supabase:', data);
+setLoading(false);
   }
 
   fetchActivities();
@@ -184,25 +185,43 @@ useEffect(() => {
         .footer-col a:hover { color: #111; }
         .footer-bottom { display: flex; align-items: center; justify-content: space-between; padding-top: 24px; flex-wrap: wrap; gap: 10px; }
         .footer-copy { font-size: 13px; color: #6B6B6B; }
+@media (max-width: 960px) {
+  .activity-item { grid-template-columns: 1fr; }
+  .activity-img { height: 200px; }
+  .how-grid { grid-template-columns: 1fr 1fr; }
+  .operator-section { grid-template-columns: 1fr; }
+  .reviews-grid { grid-template-columns: 1fr; }
+  .review-card { border-right: none; border-bottom: 1px solid #E2E2E2; }
 
-        @media (max-width: 960px) {
-          .activity-item { grid-template-columns: 1fr; }
-          .how-grid { grid-template-columns: 1fr 1fr; }
-          .operator-section { grid-template-columns: 1fr; }
-          .reviews-grid { grid-template-columns: 1fr; }
-          .review-card { border-right: none; border-bottom: 1px solid #E2E2E2; }
-          .footer-grid { grid-template-columns: 1fr 1fr; }
-        }
-        @media (max-width: 640px) {
-          .nav-links { display: none; }
-          .search-bar { flex-direction: column; }
-          .s-field { border-right: none; border-bottom: 1px solid #E2E2E2; }
-          .dest-grid { grid-template-columns: 1fr; grid-template-rows: auto; }
-          .dest-cell.wide { grid-column: span 1; }
-          .how-grid { grid-template-columns: 1fr; }
-          .footer-grid { grid-template-columns: 1fr; gap: 28px; }
-        }
-      `}</style>
+     .footer-grid { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 640px) {
+  .nav-links { display: none; }
+  .nav-cta { display: none; }
+  .hamburger { display: flex; }
+  .trust-div { display: none; }
+  .search-bar { flex-direction: column; }
+  .s-field { border-right: none; border-bottom: 1px solid #E2E2E2; }
+  .s-btn { padding: 16px; width: 100%; }
+  .section { padding: 48px 5%; }
+  .dest-grid { grid-template-columns: 1fr; grid-template-rows: auto; gap: 8px; }
+  .dest-cell { grid-column: span 1 !important; }
+  .dest-img { height: 180px; }
+  .how-grid { grid-template-columns: 1fr; }
+  .how-step { border-right: none; border-top: 1px solid #E2E2E2; }
+  .how-step:first-child { border-top: none; }
+  .review-card { border-right: none; border-bottom: 1px solid #E2E2E2; }
+  .footer-grid { grid-template-columns: 1fr; gap: 28px; }
+  .footer-bottom { flex-direction: column; }
+  .section-title { font-size: 28px; }
+  .hero-headline { font-size: 36px; }
+  .ai-section { padding: 48px 5%; }
+  .operator-text { padding: 36px 24px; }
+  .activity-footer { flex-direction: column; align-items: flex-start; }
+}
+  
+       `}</style>   
 
       {/* NAV */}
       <nav className="nav">
@@ -281,6 +300,7 @@ useEffect(() => {
           ))}
         </div>
         <div className="activity-list">
+          
           {activities.map(a => (
   <div className="activity-item" key={a.id}>
     <div className="activity-img-wrap">
