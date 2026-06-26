@@ -321,8 +321,9 @@ async function handleAiSearch() {
           ))}
         </div>
         <div className="activity-list">
-          
-          {activities.map(a => (
+          {activities
+  .filter(a => activeFilter === 'All' || a.category === activeFilter)
+  .map(a => (
   <div className="activity-item" key={a.id}>
     <div className="activity-img-wrap">
       <img className="activity-img" src={a.image_url} alt={a.title}/>
@@ -456,7 +457,7 @@ async function handleAiSearch() {
                 </div>
               ))}
             </div>
-            <a href="#" className="btn-dark" style={{display:'inline-block', width:'fit-content'}}>List your experience</a>
+<a href="/operator/register" className="btn-dark" style={{display:'inline-block', width:'fit-content'}}>List your experience</a>
           </div>
         </div>
       </section>
